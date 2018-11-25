@@ -13,6 +13,7 @@
 		45D15D7C219882AF00603215 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 45D15D7A219882AF00603215 /* Main.storyboard */; };
 		45D15D7E219882B000603215 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 45D15D7D219882B000603215 /* Assets.xcassets */; };
 		45D15D81219882B000603215 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 45D15D7F219882B000603215 /* LaunchScreen.storyboard */; };
+		C75C68FDF9BB438E584A6C33 /* Pods_AR_Puzzle_Helper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C98264E97B9D74FC1BEF38E /* Pods_AR_Puzzle_Helper.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,9 @@
 		45D15D7D219882B000603215 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		45D15D80219882B000603215 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		45D15D82219882B000603215 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9C98264E97B9D74FC1BEF38E /* Pods_AR_Puzzle_Helper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AR_Puzzle_Helper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AAC8482A69EE6C55B34CC86C /* Pods-AR Puzzle Helper.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AR Puzzle Helper.release.xcconfig"; path = "Pods/Target Support Files/Pods-AR Puzzle Helper/Pods-AR Puzzle Helper.release.xcconfig"; sourceTree = "<group>"; };
+		CEB70EE1888F4C41947C1D46 /* Pods-AR Puzzle Helper.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AR Puzzle Helper.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AR Puzzle Helper/Pods-AR Puzzle Helper.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,17 +35,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C75C68FDF9BB438E584A6C33 /* Pods_AR_Puzzle_Helper.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3160B3A0DF464EFFA7FD99CB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9C98264E97B9D74FC1BEF38E /* Pods_AR_Puzzle_Helper.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		45D15D68219882AF00603215 = {
 			isa = PBXGroup;
 			children = (
 				45D15D73219882AF00603215 /* AR Puzzle Helper */,
 				45D15D72219882AF00603215 /* Products */,
+				F8D7741C530A8255072DBCB7 /* Pods */,
+				3160B3A0DF464EFFA7FD99CB /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -67,6 +82,15 @@
 			path = "AR Puzzle Helper";
 			sourceTree = "<group>";
 		};
+		F8D7741C530A8255072DBCB7 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				CEB70EE1888F4C41947C1D46 /* Pods-AR Puzzle Helper.debug.xcconfig */,
+				AAC8482A69EE6C55B34CC86C /* Pods-AR Puzzle Helper.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -74,9 +98,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 45D15D85219882B000603215 /* Build configuration list for PBXNativeTarget "AR Puzzle Helper" */;
 			buildPhases = (
+				5E9E2987A25CD7E550595033 /* [CP] Check Pods Manifest.lock */,
 				45D15D6D219882AF00603215 /* Sources */,
 				45D15D6E219882AF00603215 /* Frameworks */,
 				45D15D6F219882AF00603215 /* Resources */,
+				45A8313521AAE68500F1A03D /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -132,6 +158,44 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		45A8313521AAE68500F1A03D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
+		};
+		5E9E2987A25CD7E550595033 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AR Puzzle Helper-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		45D15D6D219882AF00603215 /* Sources */ = {
@@ -284,6 +348,7 @@
 		};
 		45D15D86219882B000603215 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CEB70EE1888F4C41947C1D46 /* Pods-AR Puzzle Helper.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -302,6 +367,7 @@
 		};
 		45D15D87219882B000603215 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AAC8482A69EE6C55B34CC86C /* Pods-AR Puzzle Helper.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;

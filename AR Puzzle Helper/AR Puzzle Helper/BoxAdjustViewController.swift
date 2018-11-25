@@ -17,7 +17,7 @@ class BoxAdjustViewController: UIViewController {
     @IBOutlet weak var bottomRightDragger: UIView!
     var skewBox: skewBox?
     var image: UIImage?
-    var delegate: boxAdjustDelegate?
+    weak var delegate: boxAdjustDelegate?
     override func viewDidLoad() {
         imageView.image = image
     }
@@ -27,6 +27,6 @@ protocol skewBox {
     init(topLeft: CGPoint, topRight: CGPoint, bottomLeft: CGPoint, bottomRight: CGPoint)
 }
 
-protocol boxAdjustDelegate {
+protocol boxAdjustDelegate: class {
     func finishedAdjusting(with newSkewBox: skewBox)
 }
