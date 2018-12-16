@@ -24,6 +24,8 @@
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="fvz-SH-NOv" appends="YES" id="2Db-om-9VR"/>
                                     <outletCollection property="gestureRecognizers" destination="AKy-0M-djN" appends="YES" id="XYB-ZL-oLk"/>
+                                    <outletCollection property="gestureRecognizers" destination="psP-3g-K2I" appends="YES" id="vmk-gw-ZOb"/>
+                                    <outletCollection property="gestureRecognizers" destination="j4u-zZ-iwe" appends="YES" id="yaW-do-98J"/>
                                 </connections>
                             </arscnView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dzD-jO-kNr">
@@ -72,6 +74,16 @@
                         <action selector="panHappenedWithPan:" destination="BV1-FR-VrT" id="5j4-zu-GIY"/>
                     </connections>
                 </panGestureRecognizer>
+                <rotationGestureRecognizer id="psP-3g-K2I">
+                    <connections>
+                        <action selector="rotateHappenedWithRotate:" destination="BV1-FR-VrT" id="chb-m3-ziX"/>
+                    </connections>
+                </rotationGestureRecognizer>
+                <pinchGestureRecognizer id="j4u-zZ-iwe">
+                    <connections>
+                        <action selector="pinchHappenedWithPinch:" destination="BV1-FR-VrT" id="Xx2-Ck-yl8"/>
+                    </connections>
+                </pinchGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="53.600000000000001" y="26.53673163418291"/>
         </scene>

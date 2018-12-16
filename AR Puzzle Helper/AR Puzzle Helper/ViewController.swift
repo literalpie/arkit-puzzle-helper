@@ -21,6 +21,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 
     var needPuzzleSize = false
 
+    var currentPuzzleRotation: Float = 0.0
+    var currentPuzzlePinch: Float = 1.0
+
     @IBAction func scanBoxTapped(_ sender: Any) {
         puzzleImage = sceneView.snapshot()
         self.performSegue(withIdentifier: "showImageCornerAdjustment", sender: nil)
@@ -29,7 +32,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBAction func unwindToMain(segue: UIStoryboardSegue) {
         if let source = segue.source as? BoxAdjustViewController {
             needPuzzleSize = true // cannot show popup during transition, so mark it as needed later
-            let skewBox = source.editedSkewBox!
+            let skewBox = source.editedSkewBox ?? source.startingSkewBox!
             let perspectiveCornerParameters = [
                 "inputTopLeft": CIVector(cgPoint: skewBox.topLeft),
                 "inputTopRight": CIVector(cgPoint: skewBox.topRight),
@@ -74,21 +77,40 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let location = tap.location(ofTouch: 0, in: sceneView)
         let hit = sceneView.hitTest(location, types: [.existingPlaneUsingGeometry])
         // if the node exists, rotate it. Otherwise add an anchor so the node will be added.
-        if let node = puzzlePreviewNode?.childNodes.first {
-            node.eulerAngles.y += 0.1
-        } else {
-            if let hit = hit.first {
-                let position = hit.worldTransform
-                self.sceneView.session.add(anchor: ARAnchor(name: "puzzleHelp", transform: position))
-            }
+
+        if let hit = hit.first {
+            let position = hit.worldTransform
+            self.sceneView.session.add(anchor: ARAnchor(name: "puzzleHelp", transform: position))
         }
     }
+
     @IBAction func panHappened(pan: UIPanGestureRecognizer) {
         let location = pan.location(in: sceneView)
         let hit = sceneView.hitTest(location, options: nil)
         guard let anchorHit = hit.first else { return }
         let hitNode = anchorHit.node
         hitNode.worldPosition = anchorHit.worldCoordinates
+    }
+
+    @IBAction func rotateHappened(rotate: UIRotationGestureRecognizer) {
+        if let node = puzzlePreviewNode?.childNodes.first {
+            let newPuzzleRotation = Float(rotate.rotation)
+            node.eulerAngles.y = -1 * (currentPuzzleRotation + newPuzzleRotation)
+            if rotate.state == .ended {
+                self.currentPuzzleRotation += newPuzzleRotation
+            }
+        }
+    }
+
+    @IBAction func pinchHappened(pinch: UIPinchGestureRecognizer) {
+        if let node = puzzlePreviewNode?.childNodes.first {
+
+            let newPuzzlePinch = currentPuzzlePinch * Float(pinch.scale)
+            node.scale.all = newPuzzlePinch
+            if pinch.state == .ended {
+                self.currentPuzzlePinch = newPuzzlePinch
+            }
+        }
     }
 
     override func viewDidLoad() {
@@ -244,5 +266,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func sessionInterruptionEnded(_ session: ARSession) {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
 
+    }
+}
+
+extension SCNVector3 {
+    var all: Float {
+        set{
+            self.x = newValue
+            self.y = newValue
+            self.z = newValue
+        }
+        get{
+            return self.x
+        }
     }
 }
