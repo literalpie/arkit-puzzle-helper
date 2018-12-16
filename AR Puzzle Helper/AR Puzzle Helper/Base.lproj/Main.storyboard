@@ -56,6 +56,9 @@
                     <connections>
                         <outlet property="mappingStatusLabel" destination="dzD-jO-kNr" id="v15-d1-CwN"/>
                         <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
+                        <segue destination="Svv-jt-bFP" kind="popoverPresentation" identifier="showImageCornerAdjustment" popoverAnchorView="4fv-du-xIR" id="LHY-Wl-9Vo">
+                            <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                        </segue>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
@@ -108,6 +111,9 @@
                                 <rect key="frame" x="169" y="617" width="37" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Done"/>
+                                <connections>
+                                    <segue destination="IAR-u2-EjZ" kind="unwind" unwindAction="unwindToMainWithSegue:" id="2Xk-sj-dRs"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -122,6 +128,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="h0v-s5-3iY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="IAR-u2-EjZ" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="956" y="27"/>
         </scene>

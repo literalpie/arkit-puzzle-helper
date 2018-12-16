@@ -16,13 +16,58 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 
     var puzzlePreviewNode: SCNNode?
     var puzzleImage: UIImage?
+    var croppedPuzzleImage: UIImage?
     var puzzleSize: CGSize?
 
+    var needPuzzleSize = false
+
     @IBAction func scanBoxTapped(_ sender: Any) {
-        let image = sceneView.snapshot()
-        let finalImage = cropToRectangle(image)
-        puzzleImage = finalImage
-        getPuzzleSize()
+        puzzleImage = sceneView.snapshot()
+        self.performSegue(withIdentifier: "showImageCornerAdjustment", sender: nil)
+    }
+
+    @IBAction func unwindToMain(segue: UIStoryboardSegue) {
+        if let source = segue.source as? BoxAdjustViewController {
+            needPuzzleSize = true // cannot show popup during transition, so mark it as needed later
+            let skewBox = source.editedSkewBox!
+            let perspectiveCornerParameters = [
+                "inputTopLeft": CIVector(cgPoint: skewBox.topLeft),
+                "inputTopRight": CIVector(cgPoint: skewBox.topRight),
+                "inputBottomLeft": CIVector(cgPoint: skewBox.bottomLeft),
+                "inputBottomRight": CIVector(cgPoint: skewBox.bottomRight)
+            ]
+            guard let croppedImage = CIImage(image: puzzleImage!)?.applyingFilter("CIPerspectiveCorrection",
+                                                                       parameters: perspectiveCornerParameters)
+                else {
+                    print("""
+                        new image could not be creted from old image with perspective filter.
+                        Returning original image.
+                    """)
+                    croppedPuzzleImage = puzzleImage
+                    return
+                }
+            croppedPuzzleImage = getUiImage(from: croppedImage)
+
+        }
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let dest = segue.destination as? BoxAdjustViewController,
+            let puzzleImage = puzzleImage
+            else { return }
+        dest.image = puzzleImage
+        var skewBox: SkewBox?
+
+        if let rect = getRectangle(in: puzzleImage) {
+            skewBox = rect
+        } else {
+            skewBox = SkewBox(topLeft: CGPoint(x: 0.0, y: 0.0),
+                              topRight: CGPoint(x: puzzleImage.size.width, y: 0.0),
+                              bottomLeft: CGPoint(x: 0.0, y: puzzleImage.size.height - 50),
+                              bottomRight: CGPoint(x: puzzleImage.size.width, y: puzzleImage.size.height - 50))
+        }
+        dest.startingSkewBox = skewBox
+
     }
 
     @IBAction func tapHappened(tap: UITapGestureRecognizer) {
@@ -66,6 +111,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 
         // Run the view's session
         sceneView.session.run(configuration)
+
+        if needPuzzleSize {
+            getPuzzleSize()
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -89,37 +138,35 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
 
-    func cropToRectangle(_ image: UIImage) -> UIImage {
+    func getRectangle(in image: UIImage) -> SkewBox? {
         let context = CIContext()
         let detectorOptions = [CIDetectorAccuracy: CIDetectorAccuracyHigh] as [String: Any]
         guard let detector = CIDetector(ofType: CIDetectorTypeRectangle, context: context, options: detectorOptions)
             else {
                 print("detector could not be created. Returning original image")
-                return image
+                return nil
             }
         guard let ciImage = CIImage(image: image)
             else {
                 print("CIImage could not be created from UIImage. Returning original image")
-                return image
+                return nil
             }
         guard let feature = detector.features(in: ciImage).first as? CIRectangleFeature
         else {
             print("detector did not find features. Returning original image.")
-            return image
+            return nil
         }
-        let perspectiveCornerParameters = [
-            "inputTopLeft": CIVector(cgPoint: feature.topLeft),
-            "inputTopRight": CIVector(cgPoint: feature.topRight),
-            "inputBottomLeft": CIVector(cgPoint: feature.bottomLeft),
-            "inputBottomRight": CIVector(cgPoint: feature.bottomRight)
-        ]
-        guard let newImage = CIImage(image: image)?.applyingFilter("CIPerspectiveCorrection",
-                                                                   parameters: perspectiveCornerParameters)
-            else {
-                print("new image could not be creted from old image with perspective filter. Returning original image.")
-                return image
-            }
-        return getUiImage(from: newImage)
+        UIGraphicsBeginImageContext(ciImage.extent.size)
+        let currentContext = UIGraphicsGetCurrentContext()!
+        let topLeft = currentContext.convertToUserSpace(feature.topLeft)
+        let topRight = currentContext.convertToUserSpace(feature.topRight)
+        let bottomLeft = currentContext.convertToUserSpace(feature.bottomLeft)
+        let bottomRight = currentContext.convertToUserSpace(feature.bottomRight)
+        UIGraphicsEndImageContext()
+        return SkewBox(topLeft: CGPoint(x: topLeft.x, y: topLeft.y),
+                       topRight: CGPoint(x: topRight.x, y: topRight.y),
+                       bottomLeft: CGPoint(x: bottomLeft.x, y: bottomLeft.y),
+                       bottomRight: CGPoint(x: bottomRight.x, y: bottomRight.y))
     }
 
     func getUiImage(from image: CIImage) -> UIImage {
@@ -133,6 +180,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
 
     func getPuzzleSize() {
+        print("getPuzzleSize")
         let enterSizeMessage = "Please insert the dimensions of the puzzle. This can usually be found on the box"
         let sizeController = UIAlertController(title: "Puzzle Size",
                                                message: enterSizeMessage, preferredStyle: .alert)
@@ -155,6 +203,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let cancelAction = UIAlertAction(title: "cancel", style: .cancel) { (_) in  }
         sizeController.addAction(confirmAction)
         sizeController.addAction(cancelAction)
+        print("about to present")
         self.present(sizeController, animated: true, completion: nil)
     }
 
@@ -163,7 +212,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
         if anchor.name == "puzzleHelp" {
             let material = SCNMaterial()
-            guard let image = puzzleImage, let size = puzzleSize else {return nil}
+            guard let image = croppedPuzzleImage, let size = puzzleSize else {print("no image or size"); return nil}
             let plane = SCNPlane(width: size.width, height: size.height)
             material.diffuse.contents = image
 
